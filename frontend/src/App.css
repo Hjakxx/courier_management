@@ -1,0 +1,17 @@
+.App {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+}
+
+/* Smooth transitions */
+* {
+  transition: all 0.3s ease;
+}
+
+
+
+
+
+
+
+

@@ -1,0 +1,196 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
+import './ShipmentForm.css';
+
+const EditShipment = () => {
+  const { id } = useParams();
+  const [formData, setFormData] = useState({
+    trackingId: '',
+    senderName: '',
+    receiverName: '',
+    sourceLocation: '',
+    destinationLocation: '',
+    status: 'Created',
+  });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchShipment();
+  }, [id]);
+
+  const fetchShipment = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/shipments/${id}`);
+      const shipment = response.data;
+      setFormData({
+        trackingId: shipment.trackingId,
+        senderName: shipment.senderName,
+        receiverName: shipment.receiverName,
+        sourceLocation: shipment.sourceLocation,
+        destinationLocation: shipment.destinationLocation,
+        status: shipment.status,
+      });
+    } catch (error) {
+      setError(error.response?.data?.message || 'Failed to fetch shipment');
+    } finally {
+      setFetching(false);
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError('');
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      await axios.put(`http://localhost:5000/api/shipments/${id}`, formData);
+      navigate('/dashboard');
+    } catch (error) {
+      setError(error.response?.data?.message || 'Failed to update shipment');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (fetching) {
+    return (
+      <div className="form-container">
+        <div className="loading-container">
+          <div className="spinner"></div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="form-container">
+      <div className="form-card">
+        <div className="form-header">
+          <h1 className="form-title">Edit Shipment</h1>
+          <p className="form-subtitle">Update shipment details</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="shipment-form">
+          {error && <div className="error-message">{error}</div>}
+
+          <div className="form-group">
+            <label htmlFor="trackingId">Tracking ID</label>
+            <input
+              type="text"
+              id="trackingId"
+              name="trackingId"
+              value={formData.trackingId}
+              disabled
+              className="disabled-input"
+            />
+            <small className="form-hint">Tracking ID cannot be changed</small>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="senderName">Sender Name *</label>
+              <input
+                type="text"
+                id="senderName"
+                name="senderName"
+                value={formData.senderName}
+                onChange={handleChange}
+                required
+                placeholder="Enter sender name"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="receiverName">Receiver Name *</label>
+              <input
+                type="text"
+                id="receiverName"
+                name="receiverName"
+                value={formData.receiverName}
+                onChange={handleChange}
+                required
+                placeholder="Enter receiver name"
+              />
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="sourceLocation">Source Location *</label>
+              <input
+                type="text"
+                id="sourceLocation"
+                name="sourceLocation"
+                value={formData.sourceLocation}
+                onChange={handleChange}
+                required
+                placeholder="Enter source location"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="destinationLocation">Destination Location *</label>
+              <input
+                type="text"
+                id="destinationLocation"
+                name="destinationLocation"
+                value={formData.destinationLocation}
+                onChange={handleChange}
+                required
+                placeholder="Enter destination location"
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="status">Status</label>
+            <select
+              id="status"
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="form-select"
+            >
+              <option value="Created">Created</option>
+              <option value="In Transit">In Transit</option>
+              <option value="Delivered">Delivered</option>
+            </select>
+          </div>
+
+          <div className="form-actions">
+            <button
+              type="button"
+              className="form-button cancel"
+              onClick={() => navigate('/dashboard')}
+              disabled={loading}
+            >
+              Cancel
+            </button>
+            <button type="submit" className="form-button submit" disabled={loading}>
+              {loading ? 'Updating...' : 'Update Shipment'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default EditShipment;
+
+
+
+
+
+
+
+
