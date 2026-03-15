@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AuthContext from '../context/AuthContext';
@@ -26,8 +28,8 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       const [shipmentsRes, usersRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/admin/shipments'),
-        axios.get('http://localhost:5000/api/admin/users'),
+        axios.get(`${API_URL}/api/admin/shipments`),
+        axios.get(`${API_URL}/api/admin/users`),
       ]);
       setShipments(shipmentsRes.data);
       setUsers(usersRes.data);
@@ -44,7 +46,7 @@ const AdminDashboard = () => {
     try {
       setUpdatingStatus(shipmentId);
       const response = await axios.patch(
-        `http://localhost:5000/api/admin/shipments/${shipmentId}/status`,
+        `${API_URL}/api/admin/shipments/${shipmentId}/status`,
         { status: newStatus }
       );
       setShipments(shipments.map(s => s._id === shipmentId ? response.data : s));

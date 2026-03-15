@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './ShipmentForm.css';
@@ -27,7 +29,7 @@ const CreateShipment = () => {
     setLoading(true);
 
     try {
-      await axios.post('http://localhost:5000/api/shipments', formData);
+      await axios.post(`${API_URL}/api/shipments`, formData);
       navigate('/dashboard');
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to create shipment');

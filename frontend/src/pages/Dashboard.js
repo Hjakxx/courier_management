@@ -4,6 +4,9 @@ import axios from 'axios';
 import AuthContext from '../context/AuthContext';
 import './Dashboard.css';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+import './Dashboard.css';
+
 const Dashboard = () => {
   const [shipments, setShipments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,7 +21,7 @@ const Dashboard = () => {
   const fetchShipments = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:5000/api/shipments');
+      const response = await axios.get(`${API_URL}/api/shipments`);
       setShipments(response.data);
       setError('');
     } catch (error) {
@@ -32,7 +35,7 @@ const Dashboard = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this shipment?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/shipments/${id}`);
+        await axios.delete(`${API_URL}/api/shipments/${id}`);
         setShipments(shipments.filter((shipment) => shipment._id !== id));
       } catch (error) {
         alert(error.response?.data?.message || 'Failed to delete shipment');

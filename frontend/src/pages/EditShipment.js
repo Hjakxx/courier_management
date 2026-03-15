@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import './ShipmentForm.css';
@@ -24,7 +26,7 @@ const EditShipment = () => {
 
   const fetchShipment = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/shipments/${id}`);
+      const response = await axios.get(`${API_URL}/api/shipments/${id}`);
       const shipment = response.data;
       setFormData({
         trackingId: shipment.trackingId,
@@ -52,7 +54,7 @@ const EditShipment = () => {
     setLoading(true);
 
     try {
-      await axios.put(`http://localhost:5000/api/shipments/${id}`, formData);
+      await axios.put(`${API_URL}/api/shipments/${id}`, formData);
       navigate('/dashboard');
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to update shipment');
